@@ -5,7 +5,7 @@ int potValLeft = 0, potValRight = 0;
 int potPinLeft = 2, potPinRight = 1;
 int count = 0;
 int leftSpeed = 1000;
-double propConst = 0.010, integConst = 0.010, derivConst = 10;
+double const PROP = 0.010, INTEG = 0.010,DERIV = 10;
 Servo myServoLeft;
 Servo myServoRight;
 const int LEVELPOS = 0;
@@ -40,6 +40,7 @@ struct imuResult
   int16_t gyroX = 0, gyroY = 0, gyroZ = 0;
 };
 
+//RANDOM SPEED WITH POT'S
 void setMotorSpeedRandom(int potValLeft, int potValRight){
   const double MAXSPEED = 1300, MINSPEED = 900;
   
@@ -59,6 +60,7 @@ void setMotorSpeedRandom(int potValLeft, int potValRight){
   count++;
 }
 
+//SET MOTOR SPEED WITH CONSOLE INPUT/INT INPUT
 void setMotorSpeed(int rightSpeed){
   const double MAXSPEED = 1300, MINSPEED = 900;
   int rightMotorSpeed = rightSpeed * (MAXSPEED - MINSPEED) + MINSPEED; 
@@ -69,6 +71,7 @@ void setMotorSpeed(int rightSpeed){
   Serial.println ("      ");
 }
 
+//RETURNS SPEED BASED ON IUM READINGS - PID
 int getPIDSpeed ()
 {
   Serial.print (imuXAvg);
@@ -78,8 +81,8 @@ int getPIDSpeed ()
   Serial.print (imuZAvg);
   int currentError = LEVELPOS - imuYAvg;
   totalError += currentError;
-  int propPart = currentError*propConst;
-  int integPart = totalError*propConst;
+  int propPart = currentError*PROP;
+  int integPart = totalError*INTEG;
   return propPart + integPart;  
 }
 
@@ -100,6 +103,7 @@ struct imuResult readFromIMU()
 
 struct imuResult imuData;
 
+//READS AVERAGE IMU READIGS BASED ON SAMPLE SIZE
 void getIMUAverage()
 {
     imuXAvg = 0;
@@ -139,8 +143,9 @@ void loop() {
   // put your main code here, to run repeatedly:
     //potValLeft = analogRead(potPinLeft);
     //Serial.println(potValLeft);
-
-    getIMUAverage ();
+    
+    //UPDATES THE IMU AVG's FOR X,Y and Z
+    getIMUAverage();
     
     setMotorSpeed (getPIDSpeed());
    // get imu Position, pass to pid
